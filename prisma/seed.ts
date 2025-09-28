@@ -363,7 +363,12 @@ async function seedUsersAndOrders() {
         billingAddress: { connect: { id: shippingAddress.id } }, // Use same address for billing
       },
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
+    await prisma.order.updateMany({
+      where: { isDemo: true },
+      data: { paymentStatus: 'unpaid' },
+    });
+
     return order;
   }
 

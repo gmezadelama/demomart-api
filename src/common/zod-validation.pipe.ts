@@ -9,6 +9,7 @@ export class ZodValidationPipe implements PipeTransform {
     if (!result.success) {
       throw new BadRequestException(result.error.issues);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return result.data;
   }
 }

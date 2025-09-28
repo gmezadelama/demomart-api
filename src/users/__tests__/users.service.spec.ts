@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { PrismaService } from '../common/prisma.service';
-import { createPrismaMock, resetPrismaMock } from '../../test/prisma.mock';
+import { UsersService } from '../users.service';
+import { PrismaService } from '../../common/prisma.service';
+import { createPrismaMock, resetPrismaMock } from '../../../test/prisma.mock';
 
 describe('UsersService', () => {
   const prismaMock = createPrismaMock();

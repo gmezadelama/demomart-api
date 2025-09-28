@@ -204,6 +204,9 @@ model Order {
   shippingAddress Json
   billingAddress  Json
 
+  paymentStatus OrderPaymentStatus @default(unpaid)
+  payments      Payment[]
+
   items OrderItem[]
 
   @@index([userId])
@@ -277,4 +280,38 @@ model DemoResetLog {
   id          String   @id @default(cuid())
   resetAt     DateTime @default(now())
   triggeredBy String   @db.VarChar(20) // "button" | "deploy" | "manual"
+}
+
+enum PaymentStatus {
+  requires_action
+  processing
+  succeeded
+  failed
+  canceled
+}
+
+enum OrderPaymentStatus {
+  unpaid
+  paid
+  failed
+  refunded
+}
+
+model Payment {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  amountCents Int
+  currency    String
+  status      PaymentStatus
+
+  stripePaymentIntentId String? @unique
+  clientSecret          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
 }
