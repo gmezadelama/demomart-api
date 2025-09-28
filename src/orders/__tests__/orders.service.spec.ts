@@ -302,7 +302,7 @@ describe('OrdersService', () => {
       });
     });
 
-    test('cursor pagination', async () => {
+    test('skip pagination', async () => {
       (prismaMock.order.findMany as any).mockResolvedValueOnce([
         {
           id: 'o2',
@@ -333,21 +333,20 @@ describe('OrdersService', () => {
       ]);
 
       const svc = makeService();
-      const res = await svc.getOrdersByUser(userId, { limit: 2, cursor: 'o1' });
+      const res = await svc.getOrdersByUser(userId, { limit: 2, skip: 1 });
       expect(prismaMock.order.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { userId },
           take: 2,
           skip: 1,
-          cursor: { id: 'o1' },
           orderBy: { placedAt: 'desc' },
         }),
       );
       expect(res.ok).toBe(true);
-      expect(res.nextCursor).toBe('o3');
+      expect(res.items[1].id).toBe('o3');
     });
 
-    test('cursor pagination end-of-list returns null nextCursor', async () => {
+    test('skip pagination end-of-list returns null', async () => {
       (prismaMock.order.findMany as any).mockResolvedValueOnce([
         {
           id: 'o2',
@@ -365,7 +364,7 @@ describe('OrdersService', () => {
       ]);
 
       const svc = makeService();
-      const res = await svc.getOrdersByUser(userId, { limit: 2, cursor: 'o1' });
+      const res = await svc.getOrdersByUser(userId, { limit: 2, skip: 2 });
       expect(res.nextCursor).toBeNull();
     });
   });
